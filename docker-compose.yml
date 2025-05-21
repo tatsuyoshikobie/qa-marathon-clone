@@ -14,7 +14,7 @@ services:
     container_name: "nodejs"
     image: node:20-bullseye
     ports:
-      - "3000:3000"
+      - "4798:4798"
     volumes:
       - "./src/node:/app"
       - "./work:/work"
@@ -30,6 +30,7 @@ services:
     volumes:
       - "./db:/var/lib/postgresql/data"
       - "./work:/work"
+      - "./tmp/database_setup.sql:/tmp/database_setup.sql"
     working_dir: /work
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD}"
