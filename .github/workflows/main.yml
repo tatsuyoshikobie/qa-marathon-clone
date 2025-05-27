@@ -1,0 +1,36 @@
+name: 27KM CI/CD Flow to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  staging-test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: ssh
+        uses: invi5H/ssh-action@v1
+        with:
+          SSH_HOST: ${{ secrets.STG_HOST }}
+          SSH_PORT: ${{ secrets.STG_PORT }}
+          SSH_USER: ${{ secrets.STG_USER }}
+          SSH_KEY: ${{ secrets.STG_SSH_KEY }}
+      - name: Run deploy.sh on Staging
+        run: ssh ${{ secrets.STG_USER }}@${{ secrets.STG_HOST }} bash /app/deploy.sh ${{ secrets.STG_USER }}
+
+  production-deploy:
+    name: Deploy to Production
+    needs: staging-test
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - id: ssh
+        uses: invi5H/ssh-action@v1
+        with:
+          SSH_HOST: ${{ secrets.PROD_HOST }}
+          SSH_PORT: ${{ secrets.PROD_PORT }}
+          SSH_USER: ${{ secrets.PROD_USER }}
+          SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+      - name: Run deploy.sh on Production
+        run: ssh ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} bash /app/deploy.sh ${{ secrets.PROD_USER }}
