@@ -16,7 +16,6 @@ jobs:
           username: ${{ secrets.STG_USER }}
           key: ${{ secrets.STG_SSH_KEY }}
           script: |
-            chmod +x /app/deploy.sh
             /app/deploy.sh ${{ secrets.STG_USER }}
 
   production-deploy:
@@ -32,5 +31,4 @@ jobs:
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
-            chmod +x /app/deploy.sh
             /app/deploy.sh ${{ secrets.PROD_USER }}
