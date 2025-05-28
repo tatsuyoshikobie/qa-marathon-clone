@@ -9,16 +9,15 @@ jobs:
   staging-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Staging Server
+      - name: Execute deploy.sh on Staging Server
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.STG_HOST }}
           username: ${{ secrets.STG_USER }}
           key: ${{ secrets.STG_SSH_KEY }}
-          port: ${{ secrets.STG_PORT }}
           script: |
-            chmod +x ~/deploy.sh
-            ~/deploy.sh ${{ secrets.STG_USER }}
+            chmod +x /app/deploy.sh
+            /app/deploy.sh ${{ secrets.STG_USER }}
 
   production-deploy:
     name: Deploy to Production
@@ -26,13 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     steps:
-      - name: Deploy to Production Server
+      - name: Execute deploy.sh on Production Server
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
-          port: ${{ secrets.PROD_PORT }}
           script: |
-            chmod +x ~/deploy.sh
-            ~/deploy.sh ${{ secrets.PROD_USER }}
+            chmod +x /app/deploy.sh
+            /app/deploy.sh ${{ secrets.PROD_USER }}
