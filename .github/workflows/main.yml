@@ -1,4 +1,4 @@
-name: 27KM CI/CD Flow to Production
+name: ssh command for Production
 
 on:
   push:
@@ -9,14 +9,14 @@ jobs:
   staging-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Execute deploy.sh on Staging Server
-        uses: appleboy/ssh-action@v0.1.10
+      - id: ssh
+        uses: invi5H/ssh-action@v1
         with:
-          host: ${{ secrets.STG_HOST }}
-          username: ${{ secrets.STG_USER }}
-          key: ${{ secrets.STG_SSH_KEY }}
-          script: |
-            /app/deploy.sh ${{ secrets.STG_USER }}
+          SSH_HOST: ${{ secrets.STG_HOST }}
+          SSH_PORT: ${{ secrets.STG_PORT }}
+          SSH_USER: ${{ secrets.STG_USER }}
+          SSH_KEY: ${{ secrets.STG_SSH_KEY }}
+      - run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/deploy.sh ${{ secrets.STG_USER }}
 
   production-deploy:
     name: Deploy to Production
@@ -24,11 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     steps:
-      - name: Execute deploy.sh on Production Server
-        uses: appleboy/ssh-action@v0.1.10
+      - id: ssh
+        uses: invi5H/ssh-action@v1
         with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            /app/deploy.sh ${{ secrets.PROD_USER }}
+          SSH_HOST: ${{ secrets.PROD_HOST }}
+          SSH_PORT: ${{ secrets.PROD_PORT }}
+          SSH_USER: ${{ secrets.PROD_USER }}
+          SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+      - run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/deploy.sh ${{ secrets.PROD_USER }}
